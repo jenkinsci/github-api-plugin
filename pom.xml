@@ -7,7 +7,7 @@
   </parent>
 
   <artifactId>github-api</artifactId>
-  <version>1.17-SNAPSHOT</version>
+  <version>1.17</version>
   <packaging>hpi</packaging>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
 
@@ -63,7 +63,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   							<pluginExecution>
@@ -82,7 +82,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   							<pluginExecution>
@@ -102,7 +102,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   							<pluginExecution>
@@ -126,7 +126,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   							<pluginExecution>
@@ -145,7 +145,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   							<pluginExecution>
@@ -162,7 +162,7 @@
   									</goals>
   								</pluginExecutionFilter>
   								<action>
-  									<ignore></ignore>
+  									<ignore />
   								</action>
   							</pluginExecution>
   						</pluginExecutions>
