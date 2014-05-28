@@ -15,7 +15,7 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.53-SNAPSHOT</version>
+  <version>1.53</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
