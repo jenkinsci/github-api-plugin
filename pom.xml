@@ -24,7 +24,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.53</version>
+      <version>1.54</version>
     </dependency>
   </dependencies>
 
