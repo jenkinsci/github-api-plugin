@@ -15,7 +15,7 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.59</version>
+  <version>1.60-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
@@ -46,7 +46,7 @@
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>github-api-1.59</tag>
+    <tag>HEAD</tag>
   </scm>
   <build>
   	<pluginManagement>
