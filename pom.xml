@@ -15,16 +15,17 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.70-SNAPSHOT</version>
+  <version>1.71-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
 
   <dependencies>
+    <!-- TODO: Update when org.jenkins-ci.plugins:github-api is released -->
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.69</version>
+      <version>1.71-SNAPSHOT</version>
     </dependency>
   </dependencies>
 
