@@ -1,0 +1,5 @@
+# github-api-plugin
+
+This jenkins plugin packages stock https://github.com/kohsuke/github-api[github-api] library.
+Normally library should be backward-compatible. 
+If you have any issues related to library please fill in https://github.com/kohsuke/github-api/issues[GH Issues]. 
