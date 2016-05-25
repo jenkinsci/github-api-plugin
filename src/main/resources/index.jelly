@@ -1,3 +1,4 @@
+<?jelly escape-by-default='true'?>
 <div>
   This plugin provides <a href="http://github-api.kohsuke.org/">GitHub API</a> for other plugins.
 </div>
