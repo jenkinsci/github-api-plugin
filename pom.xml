@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.75</version>
+      <version>1.77</version>
       <exclusions>
         <exclusion>
           <groupId>commons-io</groupId>
