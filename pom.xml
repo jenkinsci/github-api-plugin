@@ -3,7 +3,8 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>2.11</version>
+    <version>2.19</version>
+    <relativePath/>
   </parent>
   
   <licenses>
@@ -15,7 +16,7 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.81-SNAPSHOT</version>
+  <version>1.82-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
@@ -23,13 +24,14 @@
   <properties>
     <jenkins.version>1.615</jenkins.version>
     <java.level>7</java.level>
+    <hpi-plugin.version>1.121</hpi-plugin.version>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>org.kohsuke</groupId>
+      <groupId>com.github.jglick</groupId> <!-- TODO https://github.com/kohsuke/github-api/pull/324 -->
       <artifactId>github-api</artifactId>
-      <version>1.80</version>
+      <version>ccb42d3</version>
       <exclusions>
         <exclusion>
           <groupId>commons-io</groupId>
@@ -49,6 +51,10 @@
     <repository>
       <id>repo.jenkins-ci.org</id>
       <url>https://repo.jenkins-ci.org/public/</url>
+    </repository>
+    <repository> <!-- TODO as above -->
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
     </repository>
   </repositories>
 
