@@ -15,7 +15,7 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.81-SNAPSHOT</version>
+  <version>1.82-SNAPSHOT</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
@@ -29,7 +29,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.80</version>
+      <version>1.82</version>
       <exclusions>
         <exclusion>
           <groupId>commons-io</groupId>
