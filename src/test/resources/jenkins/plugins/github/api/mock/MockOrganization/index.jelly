@@ -1,0 +1,28 @@
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler"><st:contentType value="application/json; charset=utf-8"/>{
+  "login": "${it.login}",
+  "id": ${it.id},
+  "url": "${app.url}/users/${it.login}",
+  "repos_url": "${app.url}/orgs/${it.login}/repos",
+  "events_url": "${app.url}/orgs/${it.login}/events",
+  "hooks_url": "${app.url}/orgs/${it.login}/hooks",
+  "issues_url": "${app.url}/orgs/${it.login}/issues",
+  "members_url": "${app.url}/${it.login}/members{/member}",
+  "public_members_url": "${app.url}/orgs/${it.login}/public_members{/member}",
+  "avatar_url": ${app.json(it.avatarUrl)},
+  "description": ${app.json(it.description)},
+  "name": ${app.json(it.name)},
+  "company": ${app.json(it.company)},
+  "blog": ${app.json(it.blog)},
+  "location": ${app.json(it.location)},
+  "email": ${app.json(it.email)},
+  "has_organization_projects": true,
+  "has_repository_projects": true,
+  "public_repos": ${it.publicRepos},
+  "public_gists": 0,
+  "followers": ${it.followers},
+  "following": ${it.following},
+  "created_at": "${app.tz(it.created)}",
+  "updated_at": "${app.tz(it.updated)}",
+  "type": "${it.type}"
+}
+</j:jelly>
