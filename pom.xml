@@ -36,7 +36,7 @@
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.86-20170628.211328-1</version> <!-- TODO https://github.com/kohsuke/github-api/pull/359 -->
+      <version>1.86</version>
       <exclusions>
         <exclusion>
           <groupId>commons-io</groupId>
