@@ -50,6 +50,14 @@
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
         </exclusion>
+        <exclusion> <!-- TODO pending https://github.com/kohsuke/github-api/pull/378 -->
+          <groupId>com.infradna.tool</groupId>
+          <artifactId>bridge-method-annotation</artifactId>
+        </exclusion>
+        <exclusion> <!-- provided by core -->
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
