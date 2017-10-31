@@ -77,7 +77,7 @@ public class SmokeTest {
             assertThat(actual.getAvatarUrl(), is(expected.getAvatarUrl()));
             assertThat(actual.getBlog(), is(expected.getBlog()));
             assertThat(actual.getCompany(), is(expected.getCompany()));
-            assertThat(actual.getId(), is((int)expected.getId()));
+            assertThat(actual.getId(), is((long)expected.getId()));
             assertThat(actual.getPublicRepoCount(), is(expected.getPublicRepos()));
         }
     }
@@ -98,7 +98,7 @@ public class SmokeTest {
             assertThat(actual.getName(), is(expected.getName()));
             assertThat(actual.getAvatarUrl(), is(expected.getAvatarUrl()));
             assertThat(actual.getBlog(), is(expected.getBlog()));
-            assertThat(actual.getId(), is((int)expected.getId()));
+            assertThat(actual.getId(), is((long)expected.getId()));
             assertThat(actual.getPublicRepoCount(), is(expected.getPublicRepos()));
         }
     }
