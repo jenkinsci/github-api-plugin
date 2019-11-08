@@ -8,7 +8,9 @@ import jenkins.plugins.github.api.mock.MockGitHub;
 import jenkins.plugins.github.api.mock.MockOrganization;
 import jenkins.plugins.github.api.mock.MockUser;
 import org.apache.commons.io.IOUtils;
+import org.junit.Rule;
 import org.junit.Test;
+import org.jvnet.hudson.test.JenkinsRule;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -19,6 +21,10 @@ import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 
 public class SmokeTest {
+
+    @Rule
+    public JenkinsRule jenkins = new JenkinsRule();
+
     @Test
     public void given__veryBasicMockGitHub__when__connectingAnonymously__then__apiUrlValid() throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
