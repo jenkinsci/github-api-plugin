@@ -22,9 +22,6 @@ import static org.junit.Assert.assertThat;
 
 public class SmokeTest {
 
-    @Rule
-    public JenkinsRule jenkins = new JenkinsRule();
-
     @Test
     public void given__veryBasicMockGitHub__when__connectingAnonymously__then__apiUrlValid() throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
