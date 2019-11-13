@@ -52,14 +52,6 @@
           </execution>
         </executions>
       </plugin>
-      <plugin>
-        <artifactId>maven-release-plugin</artifactId>
-        <configuration>
-          <!-- we do not want to auto-increment when releasing -->
-          <!-- use instructions at https://github.com/jenkinsci/incrementals-tools#superseding-maven-releases to release -->
-          <preparationGoals>not-set-up-for-MRP</preparationGoals>
-        </configuration>
-      </plugin>
     </plugins>
   </build>
 
