@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>2.31</version>
+    <version>3.51</version>
     <relativePath />
   </parent>
   
@@ -16,27 +16,55 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.95-SNAPSHOT</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
 
   <properties>
-    <jenkins.version>2.60.3</jenkins.version>
+    <revision>1.99</revision>
+    <github-api.version>1.99</github-api.version>
+    <changelist>-SNAPSHOT</changelist>
+    <jenkins.version>2.150.3</jenkins.version>
     <java.level>8</java.level>
     <no-test-jar>false</no-test-jar>
   </properties>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>enforce-property</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <requireProperty>
+                  <property>revision</property>
+                  <regex>\Q${github-api.version}\E</regex>
+                  <regexMessage>revision (${revision}) must equal github-api.version (${github-api.version})</regexMessage>
+                </requireProperty>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
   <dependencies>
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
-      <version>2.9.7.1</version>
+      <version>2.10.0</version>
     </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
       <artifactId>github-api</artifactId>
-      <version>1.95</version>
+      <version>${github-api.version}</version>
       <exclusions>
         <exclusion>
           <groupId>commons-io</groupId>
@@ -81,6 +109,6 @@
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>${scmTag}</tag>
   </scm>
 </project>
