@@ -1,0 +1,83 @@
+= Changelog
+
+=== Newer versions
+
+See link:https://github.com/jenkinsci/github-api-plugin/releases[GitHub Releases]
+
+=== 1.90
+
+Release date: (Nov 1, 2017)
+
+* https://issues.jenkins-ci.org/browse/JENKINS-47601[JENKINS-47601] Issues with 64bit commit status id
+* https://issues.jenkins-ci.org/browse/JENKINS-47632[JENKINS-47632] Github repo id overflowing java int
+* https://github.com/kohsuke/github-api/pull/389[PR-389] Fixed OAuth connection to enterprise API
+* https://github.com/kohsuke/github-api/pull/390[PR-390] Labels: add method to update color
+* https://github.com/kohsuke/github-api/issues/355[Issue-355] Update GHPullRequest with missing properties
+
+=== 1.89
+
+Release date: (Sep 25th, 2017)
+
+* Remove necessary transitive dependencies
+* Update to 1.89 of org.kohsuke:github-api
+
+=== 1.86
+
+Release date: (Jul 3rd, 2017)
+
+* JENKINS-45142 Retry connections which fail with `+SocketTimeoutException+`.
+
+=== 1.85.1
+
+Release date: (May 31st, 2017)
+
+* Migrated from bundling jackson2 to dependency on  to resolve class conflicts
+(https://issues.jenkins-ci.org/browse/JENKINS-44581[JENKINS-44581])
+
+=== 1.85
+
+Release date: (Mar 1st, 2017)
+
+* Updated the `+github-api+` dependency from `+1.84+` to `+1.85+`
+
+=== 1.84
+
+Release date: (Jan 10th, 2017)
+
+* Updated the `+github-api+` dependency from `+1.82+` to `+1.84+`
+
+=== 1.82
+
+Release date: (Dec 20th, 2016)
+
+* Updated the `+github-api+` dependency from `+1.80+` to `+1.82+`
+
+=== 1.80
+
+Release date: (Nov 17th, 2016)
+
+* Updated the `+github-api+` dependency from `+1.79+` to `+1.80+`
+
+=== 1.79
+
+Release date: (Oct 26th, 2016)
+
+* Updated the `+github-api+` dependency from `+1.77+` to `+1.79+`
+
+=== 1.77
+
+Release date: (Aug 10th, 2016)
+
+* Updated the `+github-api+` dependency from `+1.75+` to `+1.77+`
+
+=== 1.76
+
+Release date: (Jul 1st, 2016)
+
+* https://issues.jenkins-ci.org/browse/JENKINS-35118[JENKINS-35118] Migrate to new parent POM.
+
+=== 1.16
+
+Release date: (Jan 4th, 2012)
+
+* Initial release
