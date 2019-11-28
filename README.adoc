@@ -1,5 +1,9 @@
 # GitHub API Plugin for Jenkins
 
+image:https://img.shields.io/jenkins/plugin/v/github-api.svg[link="https://plugins.jenkins.io/github-api"]
+image:https://img.shields.io/github/release/jenkinsci/github-api-plugin.svg?label=changelog[link="https://github.com/jenkinsci/github-api-plugin/releases/latest"]
+image:https://img.shields.io/jenkins/plugin/i/github-api.svg?color=blue[link="https://plugins.jenkins.io/github-api"]
+
 This jenkins plugin packages the stock https://github.com/kohsuke/github-api[github-api] library.
 Normally library should be backward-compatible. 
 
