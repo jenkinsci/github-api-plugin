@@ -1,5 +1,33 @@
-# github-api-plugin
+# GitHub API Plugin for Jenkins
 
-This jenkins plugin packages stock https://github.com/kohsuke/github-api[github-api] library.
+image:https://img.shields.io/jenkins/plugin/v/github-api.svg[link="https://plugins.jenkins.io/github-api"]
+image:https://img.shields.io/github/release/jenkinsci/github-api-plugin.svg?label=changelog[link="https://github.com/jenkinsci/github-api-plugin/releases/latest"]
+image:https://img.shields.io/jenkins/plugin/i/github-api.svg?color=blue[link="https://plugins.jenkins.io/github-api"]
+
+This jenkins plugin packages the stock https://github.com/kohsuke/github-api[github-api] library.
 Normally library should be backward-compatible. 
+
+== Usage
+
+This plugin is a library plugin used by other GitHub related plugins to share the same libraries.
+This plugin does not have any user visible feature by itself.
+There's no need to install this plugin manually, although you want to keep it up to date.
+
+== Note to plugin developers
+
+If you are developing a plugin that depends on http://kohsuke.org/github-api[github-api],
+it's is highly recommended that you depend on this as opposed to bundle the jar locally.
+Doing so (as opposed to depending on `+org.kohsuke:github-api+` as a jar),
+we can eliminate the classloader problems caused by having multiple copies of github-api loaded.
+Specifically, if plugin A and B both locally includes its own copy of the `+github-api.jar+` and another plugin C depends on A and B, it'll break.
+
+== Changelog
+
+* See link:https://github.com/jenkinsci/github-api-plugin/releases[GitHub Releases] for recent plugin versions
+* For versions 1.95 and older, see the link:./CHANGELOG.adoc[Changelog]
+
+NOTE: The version number of this plugin tracks the version number of `+github-api.jar+`.
+
+== Reporting issues
+
 If you have any issues related to library please fill in https://github.com/kohsuke/github-api/issues[GH Issues]. 

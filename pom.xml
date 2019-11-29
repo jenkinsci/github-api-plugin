@@ -19,7 +19,7 @@
   <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
-  <url>https://wiki.jenkins-ci.org/display/JENKINS/GitHub+API+Plugin</url>
+  <url>https://github.com/jenkinsci/github-api-plugin</url>
 
   <properties>
     <revision>1.99</revision>
