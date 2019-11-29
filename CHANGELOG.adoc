@@ -25,7 +25,7 @@ Release date: (Sep 25th, 2017)
 
 Release date: (Jul 3rd, 2017)
 
-* JENKINS-45142 Retry connections which fail with `+SocketTimeoutException+`.
+* https://issues.jenkins-ci.org/browse/JENKINS-45142[JENKINS-45142] Retry connections which fail with `+SocketTimeoutException+`.
 
 === 1.85.1
 
