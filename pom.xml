@@ -16,7 +16,7 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>${revision}${changelist}</version>
+  <version>1.105</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://github.com/jenkinsci/github-api-plugin</url>
@@ -103,6 +103,6 @@
   <scm>
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <tag>${scmTag}</tag>
+    <tag>github-api-1.105</tag>
   </scm>
 </project>
