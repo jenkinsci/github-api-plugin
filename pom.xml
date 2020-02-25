@@ -29,31 +29,6 @@
     <java.level>8</java.level>
     <no-test-jar>false</no-test-jar>
   </properties>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-property</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireProperty>
-                  <property>revision</property>
-                  <regex>\Q${github-api.version}\E.*</regex>
-                  <regexMessage>revision (${revision}) must start with github-api.version (${github-api.version})</regexMessage>
-                </requireProperty>
-              </rules>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
 
   <dependencies>
     <dependency>
