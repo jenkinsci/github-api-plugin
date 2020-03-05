@@ -22,8 +22,8 @@
   <url>https://github.com/jenkinsci/github-api-plugin</url>
 
   <properties>
-    <revision>1.107</revision>
-    <github-api.version>1.106</github-api.version>
+    <revision>1.108</revision>
+    <github-api.version>1.108</github-api.version>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.150.3</jenkins.version>
     <java.level>8</java.level>
