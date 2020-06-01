@@ -22,7 +22,7 @@
   <url>https://github.com/jenkinsci/github-api-plugin</url>
 
   <properties>
-    <revision>1.112</revision>
+    <revision>1.111.1</revision>
     <github-api.version>1.111</github-api.version>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.164.3</jenkins.version>
@@ -35,6 +35,11 @@
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
       <version>2.10.2</version>
+    </dependency>
+    <dependency>
+        <groupId>io.jenkins.plugins</groupId>
+        <artifactId>okhttp-api</artifactId>
+        <version>3.12.12.2</version>
     </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
@@ -52,11 +57,6 @@
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>com.squareup.okhttp</groupId>
-      <artifactId>okhttp-urlconnection</artifactId>
-      <version>2.7.5</version>
     </dependency>
   </dependencies>
 
