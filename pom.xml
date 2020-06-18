@@ -16,13 +16,13 @@
   </licenses>
 
   <artifactId>github-api</artifactId>
-  <version>1.114.3</version>
+  <version>${revision}${changelist}</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
   <url>https://github.com/jenkinsci/github-api-plugin</url>
 
   <properties>
-    <revision>1.114.3</revision>
+    <revision>1.114.4</revision>
     <github-api.version>1.114</github-api.version>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.164.3</jenkins.version>
@@ -107,6 +107,6 @@
     <connection>scm:git:git://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
     <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
     <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
-    <tag>github-api-1.114.3</tag>
+    <tag>${scmTag}</tag>
   </scm>
 </project>
