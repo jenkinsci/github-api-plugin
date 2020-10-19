@@ -24,6 +24,7 @@
   <properties>
     <revision>1.117</revision>
     <github-api.version>1.117-20201019.133925-1</github-api.version> <!-- TODO https://github.com/hub4j/github-api/pull/964 -->
+    <enforcer.skip>true</enforcer.skip> <!-- TODO for snapshot ^^^ -->
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.164.3</jenkins.version>
     <java.level>8</java.level>
