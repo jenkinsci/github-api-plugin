@@ -25,7 +25,7 @@
     <revision>1.118</revision>
     <github-api.version>1.117</github-api.version>
     <changelist>-SNAPSHOT</changelist>
-    <jenkins.version>2.164.3</jenkins.version>
+    <jenkins.version>2.176.4</jenkins.version>
     <java.level>8</java.level>
     <no-test-jar>false</no-test-jar>
   </properties>
@@ -34,7 +34,6 @@
     <dependency>
       <groupId>org.jenkins-ci.plugins</groupId>
       <artifactId>jackson2-api</artifactId>
-      <version>2.10.2</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
@@ -87,6 +86,18 @@
     </dependency>
 
   </dependencies>
+  
+  <dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>io.jenkins.tools.bom</groupId>
+            <artifactId>bom-2.176.x</artifactId>
+            <version>16</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+    </dependencies>
+  </dependencyManagement>
 
   <!-- get every artifact through maven.glassfish.org, which proxies all the artifacts that we need -->
   <repositories>
