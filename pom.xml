@@ -22,7 +22,7 @@
   <url>https://github.com/jenkinsci/github-api-plugin</url>
 
   <properties>
-    <revision>1.118</revision>
+    <revision>1.222</revision>
     <github-api.version>1.122</github-api.version>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.222.4</jenkins.version>
