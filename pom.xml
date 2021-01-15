@@ -43,7 +43,7 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.11.2-4.ba1e9390e5ff</version>
+      <version>0.11.2-5.143e44951c52</version>
       <optional>true</optional>
     </dependency>
     <dependency>
