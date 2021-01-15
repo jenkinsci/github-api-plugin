@@ -44,6 +44,7 @@
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jjwt-api</artifactId>
       <version>0.11.2-3.3ae26ccdac4e</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
       <groupId>org.kohsuke</groupId>
@@ -78,6 +79,11 @@
         </exclusion>
         <exclusion>
           <groupId>com.squareup.okio</groupId>
+          <artifactId>*</artifactId>
+        </exclusion>
+        <!-- jjwt dependencies are provided by jjwt-api plugin -->
+        <exclusion>
+          <groupId>io.jsonwebtoken</groupId>
           <artifactId>*</artifactId>
         </exclusion>
       </exclusions>
