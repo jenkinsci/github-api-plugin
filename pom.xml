@@ -23,7 +23,7 @@
 
   <properties>
     <revision>1.123</revision>
-    <github-api.version>1.122</github-api.version>
+    <github-api.version>1.123</github-api.version>
     <changelist>-SNAPSHOT</changelist>
     <jenkins.version>2.222.4</jenkins.version>
     <java.level>8</java.level>
