@@ -36,9 +36,10 @@
       <artifactId>jackson2-api</artifactId>
     </dependency>
     <dependency>
+      <!-- Test okhttp 4.9.2 --> 
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>okhttp-api</artifactId>
-      <version>3.14.9</version>
+      <version>3.14.9-20211030-rc77.2e72ec389e0e</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
