@@ -20,6 +20,7 @@ import org.kohsuke.github.GitHub;
 import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.HttpConnector;
 import org.kohsuke.github.extras.OkHttpConnector;
+import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
 import javax.annotation.Nonnull;
 
@@ -53,10 +54,12 @@ public class SmokeTest {
     public static IOFunction[] connectFunctions() {
         HttpConnector okHttpConnector = new OkHttpConnector(new OkUrlFactory(new OkHttpClient()));
         HttpConnector okHttp3Connector = new org.kohsuke.github.extras.okhttp3.OkHttpConnector(new okhttp3.OkHttpClient());
+        OkHttpGitHubConnector okHttpGitHubConnector = new OkHttpGitHubConnector(new okhttp3.OkHttpClient());
         ArrayList<IOFunction> list = new ArrayList<>();
         list.add ((mock) -> GitHub.connectToEnterpriseAnonymously(mock.open()));
         list.add ((mock) -> new GitHubBuilder().withConnector(okHttpConnector).withEndpoint(mock.open()).build());
         list.add ((mock) -> new GitHubBuilder().withConnector(okHttp3Connector).withEndpoint(mock.open()).build());
+        list.add ((mock) -> new GitHubBuilder().withConnector(okHttpGitHubConnector).withEndpoint(mock.open()).build());
 
         return list.toArray(new IOFunction[] {});
     }
