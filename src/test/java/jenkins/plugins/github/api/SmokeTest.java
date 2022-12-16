@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.OkUrlFactory;
 import jenkins.plugins.github.api.mock.MockGitHub;
 import jenkins.plugins.github.api.mock.MockOrganization;
 import jenkins.plugins.github.api.mock.MockUser;
@@ -52,12 +50,10 @@ public class SmokeTest {
 
     @Parameterized.Parameters(name = "connectFunction={index}")
     public static IOFunction[] connectFunctions() {
-        HttpConnector okHttpConnector = new OkHttpConnector(new OkUrlFactory(new OkHttpClient()));
         HttpConnector okHttp3Connector = new org.kohsuke.github.extras.okhttp3.OkHttpConnector(new okhttp3.OkHttpClient());
         OkHttpGitHubConnector okHttpGitHubConnector = new OkHttpGitHubConnector(new okhttp3.OkHttpClient());
         ArrayList<IOFunction> list = new ArrayList<>();
         list.add ((mock) -> GitHub.connectToEnterpriseAnonymously(mock.open()));
-        list.add ((mock) -> new GitHubBuilder().withConnector(okHttpConnector).withEndpoint(mock.open()).build());
         list.add ((mock) -> new GitHubBuilder().withConnector(okHttp3Connector).withEndpoint(mock.open()).build());
         list.add ((mock) -> new GitHubBuilder().withConnector(okHttpGitHubConnector).withEndpoint(mock.open()).build());
 
