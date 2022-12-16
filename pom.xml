@@ -1,16 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.40</version>
+    <version>4.53</version>
     <relativePath />
   </parent>
   
   <licenses>
     <license>
       <name>The MIT License (MIT)</name>
-      <url>http://opensource.org/licenses/MIT</url>
+      <url>https://opensource.org/licenses/MIT</url>
       <distribution>repo</distribution>
     </license>
   </licenses>
@@ -19,13 +20,13 @@
   <version>${revision}-${changelist}</version>
   <packaging>hpi</packaging>
   <name>GitHub API Plugin</name>
-  <url>https://github.com/jenkinsci/github-api-plugin</url>
+  <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <properties>
     <revision>1.303</revision>
     <changelist>999999-SNAPSHOT</changelist>
-    <jenkins.version>2.289.1</jenkins.version>
-    <java.level>8</java.level>
+    <jenkins.version>2.361.4</jenkins.version>
+    <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <no-test-jar>false</no-test-jar>
   </properties>
 
@@ -37,17 +38,14 @@
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>commons-lang3-api</artifactId>
-      <version>3.12.0.0</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>okhttp-api</artifactId>
-      <version>4.9.2-20211102</version>
     </dependency>
     <dependency>
       <groupId>io.jenkins.plugins</groupId>
       <artifactId>jjwt-api</artifactId>
-      <version>0.11.2-5.143e44951c52</version>
       <optional>true</optional>
     </dependency>
     <dependency>
@@ -111,8 +109,8 @@
     <dependencies>
         <dependency>
             <groupId>io.jenkins.tools.bom</groupId>
-            <artifactId>bom-2.289.x</artifactId>
-            <version>1438.v6a_2c29d73f82</version>
+            <artifactId>bom-2.361.x</artifactId>
+            <version>1750.v0071fa_4c4a_e3</version>
             <scope>import</scope>
             <type>pom</type>
         </dependency>
@@ -135,9 +133,9 @@
   </pluginRepositories>
   
   <scm>
-    <connection>scm:git:https://github.com/jenkinsci/${project.artifactId}-plugin.git</connection>
-    <developerConnection>scm:git:git@github.com:jenkinsci/${project.artifactId}-plugin.git</developerConnection>
-    <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
+    <connection>scm:git:https://github.com/${gitHubRepo}.git</connection>
+    <developerConnection>scm:git:git@github.com:${gitHubRepo}.git</developerConnection>
+    <url>https://github.com/${gitHubRepo}</url>
     <tag>${scmTag}</tag>
   </scm>
 </project>
