@@ -28,6 +28,7 @@
     <jenkins.version>2.361.4</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <no-test-jar>false</no-test-jar>
+    <kotlin.version>1.8.10</kotlin.version>
   </properties>
 
   <dependencies>
@@ -111,6 +112,13 @@
             <groupId>io.jenkins.tools.bom</groupId>
             <artifactId>bom-2.361.x</artifactId>
             <version>1887.vda_d0ddb_c15c4</version>
+            <scope>import</scope>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains.kotlin</groupId>
+            <artifactId>kotlin-bom</artifactId>
+            <version>${kotlin.version}</version>
             <scope>import</scope>
             <type>pom</type>
         </dependency>
