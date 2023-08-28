@@ -23,7 +23,7 @@
   <url>https://github.com/jenkinsci/${project.artifactId}-plugin</url>
 
   <properties>
-    <revision>1.315</revision>
+    <revision>1.316</revision>
     <changelist>999999-SNAPSHOT</changelist>
     <jenkins.version>2.361.4</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
