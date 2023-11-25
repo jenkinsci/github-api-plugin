@@ -16,21 +16,10 @@ There's no need to install this plugin manually, although you want to keep it up
 == Note to plugin developers
 
 If you are developing a plugin that depends on http://kohsuke.org/github-api[github-api],
-it's is highly recommended that you depend on this as opposed to bundle the jar locally.
+it's is highly recommended that you depend on this pluging as opposed to bundle the jar locally.
 Doing so (as opposed to depending on `+org.kohsuke:github-api+` as a jar),
 we can eliminate the classloader problems caused by having multiple copies of github-api loaded.
 Specifically, if plugin A and B both locally includes its own copy of the `+github-api.jar+` and another plugin C depends on A and B, it'll break.
-
-== Publishing a new release
-
-The major and minor version numbers of this plugin align to the version of the 
-https://github.com/kohsuke/github-api[github-api] library version. 
-
-This plugin uses the standard system for publishing
-https://www.jenkins.io/doc/developer/publishing/releasing-cd/#releasing[incremental Jenkins releases].
-To trigger the system to publish a new version of this plugin, add a descriptive label such as `developer` or `enhancement`
-to your PR before it is merged. When the PR is merged, the system will automatically publish a new version of the plugin.
-NOTE: the `dependencies`, `chore`, and `java` labels will not trigger a the publishing of a new version.
 
 == Changelog
 

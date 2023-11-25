@@ -1,0 +1,10 @@
+= Contributing
+
+== Publishing a new release
+
+This plugin uses the standard system for publishing
+https://www.jenkins.io/doc/developer/publishing/releasing-cd/#releasing[incremental Jenkins releases].
+To trigger the system to publish a new version of this plugin, add a descriptive label such as `developer` or `enhancement`
+to your PR before it is merged. When the PR is merged, the system will automatically publish a new version of the plugin.
+
+NOTE: the `dependencies`, `chore`, and `java` labels will not trigger publishing of a new version.
