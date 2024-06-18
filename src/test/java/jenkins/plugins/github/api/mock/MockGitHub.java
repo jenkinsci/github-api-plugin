@@ -22,18 +22,18 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletException;
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.ee8.servlet.ServletContextHandler;
+import org.eclipse.jetty.ee9.servlet.ServletContextHandler;
 import org.jvnet.hudson.test.ThreadPoolImpl;
 import org.kohsuke.stapler.HttpResponse;
 import org.kohsuke.stapler.QueryParameter;
 import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest;
-import org.kohsuke.stapler.StaplerResponse;
+import org.kohsuke.stapler.StaplerRequest2;
+import org.kohsuke.stapler.StaplerResponse2;
 
 public class MockGitHub implements Closeable {
     private AtomicLong nextId = new AtomicLong();
@@ -178,7 +178,7 @@ public class MockGitHub implements Closeable {
     public HttpResponse doRepositories(final @QueryParameter long since) {
         return new HttpResponse() {
             @Override
-            public void generateResponse(StaplerRequest req, StaplerResponse rsp, Object node)
+            public void generateResponse(StaplerRequest2 req, StaplerResponse2 rsp, Object node)
                     throws IOException, ServletException {
                 List<MockRepository> repositories = new ArrayList<>();
                 for (MockOwner<?> o : owners()) {
