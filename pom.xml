@@ -25,7 +25,7 @@
   <properties>
     <revision>1.321</revision>
     <changelist>999999-SNAPSHOT</changelist>
-    <jenkins.version>2.472-rc35224.f615612a_1850</jenkins.version>
+    <jenkins.version>2.472</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <no-test-jar>false</no-test-jar>
     <!-- TODO JENKINS-73339 until in parent POM -->
