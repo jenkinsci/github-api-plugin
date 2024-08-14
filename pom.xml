@@ -25,7 +25,6 @@
   <properties>
     <revision>1.321</revision>
     <changelist>999999-SNAPSHOT</changelist>
-    <jenkins.baseline>2.462</jenkins.baseline>
     <jenkins.version>2.472</jenkins.version>
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
     <no-test-jar>false</no-test-jar>
@@ -106,7 +105,7 @@
     <dependencies>
         <dependency>
             <groupId>io.jenkins.tools.bom</groupId>
-            <artifactId>bom-${jenkins.baseline}.x</artifactId>
+            <artifactId>bom-weekly</artifactId>
             <version>3258.vcdcf15936a_fd</version>
             <scope>import</scope>
             <type>pom</type>
