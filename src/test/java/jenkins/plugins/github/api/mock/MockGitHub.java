@@ -2,105 +2,55 @@ package jenkins.plugins.github.api.mock;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
-import hudson.Util;
+import com.sun.net.httpserver.HttpExchange;
+import com.sun.net.httpserver.HttpHandler;
+import com.sun.net.httpserver.HttpServer;
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.net.HttpURLConnection;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TimeZone;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
-import jakarta.servlet.ServletException;
-import org.eclipse.jetty.server.HttpConfiguration;
-import org.eclipse.jetty.server.HttpConnectionFactory;
-import org.eclipse.jetty.server.Server;
-import org.eclipse.jetty.server.ServerConnector;
-import org.eclipse.jetty.ee9.servlet.ServletContextHandler;
-import org.jvnet.hudson.test.ThreadPoolImpl;
-import org.kohsuke.stapler.HttpResponse;
-import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.Stapler;
-import org.kohsuke.stapler.StaplerRequest2;
-import org.kohsuke.stapler.StaplerResponse2;
 
 public class MockGitHub implements Closeable {
     private AtomicLong nextId = new AtomicLong();
     private Map<String, MockUser> users = new HashMap<>();
     private Map<String, MockOrganization> organizations = new HashMap<>();
 
-    private Server server;
+    private HttpServer server;
 
-    private int localPort = -1;
+    private String url;
     private JsonFactory factory = new JsonFactory();
 
     public String open() throws IOException {
-        server = new Server(new ThreadPoolImpl(
-                new ThreadPoolExecutor(10, 10, 10L, TimeUnit.SECONDS, new LinkedBlockingQueue<Runnable>(),
-                        new ThreadFactory() {
-                            public Thread newThread(Runnable r) {
-                                Thread t = new Thread(r);
-                                t.setName("Jetty Thread Pool");
-                                return t;
-                            }
-                        })));
-        ServletContextHandler context = new ServletContextHandler();
-        server.setHandler(context);
-        ;
-        context.addServlet(Stapler.class, "/*");
+        server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);
+        server.createContext("/", new RootHandler(this));
+        server.createContext("/orgs", new OrgsHandler(this));
+        server.createContext("/users", new UsersHandler(this));
+        server.createContext("/repositories", new RepositoriesHandler(this));
+        server.start();
 
-        ServerConnector connector = new ServerConnector(server);
-        HttpConfiguration config = connector.getConnectionFactory(HttpConnectionFactory.class).getHttpConfiguration();
-        // use a bigger buffer as Stapler traces can get pretty large on deeply nested URL
-        config.setRequestHeaderSize(12 * 1024);
-        connector.setHost("localhost");
-
-        server.addConnector(connector);
-        try {
-            server.start();
-        } catch (IOException | RuntimeException | Error e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
-
-        localPort = connector.getLocalPort();
-        context.getServletContext().setAttribute("app", this);
-        return getUrl();
-    }
-
-    public String getUrl() {
-        if (localPort == -1) {
-            throw new IllegalStateException("Not open");
-        }
-        try {
-            return new URI("http", null, "localhost", localPort, null, null, null).toASCIIString();
-        } catch (URISyntaxException e) {
-            throw new IllegalStateException("Will never happen", e);
-        }
+        InetSocketAddress address = server.getAddress();
+        url = String.format("http://%s:%d", address.getHostString(), address.getPort());
+        return url;
     }
 
     @Override
-    public void close() throws IOException {
-        localPort = -1;
-        try {
-            server.stop();
-        } catch (IOException | RuntimeException | Error e) {
-            throw e;
-        } catch (Exception e) {
-            throw new IOException(e);
-        }
+    public void close() {
+        server.stop(1);
+    }
+
+    public String getUrl() {
+        return url;
     }
 
     public Map<String, MockUser> getUsers() {
@@ -115,45 +65,10 @@ public class MockGitHub implements Closeable {
         return nextId.incrementAndGet();
     }
 
-    public String tz(long time) {
-        SimpleDateFormat format = new SimpleDateFormat("YYYY-MM-dd'T'HH:mm:ss'Z'");
+    public static String tz(long time) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         format.setTimeZone(TimeZone.getTimeZone("UTC"));
         return format.format(new Date(time));
-    }
-
-    public String pathSegment(String segment) {
-        return Util.rawEncode(segment);
-    }
-
-    public String pathFragment(String fragment) {
-        StringBuilder result = new StringBuilder(fragment.length() + 10);
-        int i0 = 0;
-        int i1 = fragment.indexOf('/');
-        while (i0 != -1) {
-            if (i0 > 0) {
-                result.append('/');
-            }
-            if (i1 == -1) {
-                result.append(pathSegment(fragment.substring(i0)));
-                i0 = i1;
-            } else {
-                result.append(pathSegment(fragment.substring(i0, i1)));
-                i0 = i1 + 1;
-                i1 = fragment.indexOf('/', i0);
-            }
-        }
-        return result.toString();
-    }
-
-    public String json(Object object) throws IOException {
-        if (object == null) {
-            return "null";
-        }
-        StringWriter w = new StringWriter();
-        JsonGenerator generator = factory.createGenerator(w);
-        generator.writeObject(object);
-        generator.close();
-        return w.toString();
     }
 
     public MockUser withUser(String login) {
@@ -175,59 +90,285 @@ public class MockGitHub implements Closeable {
         return result;
     }
 
-    public HttpResponse doRepositories(final @QueryParameter long since) {
-        return new HttpResponse() {
-            @Override
-            public void generateResponse(StaplerRequest2 req, StaplerResponse2 rsp, Object node)
-                    throws IOException, ServletException {
-                List<MockRepository> repositories = new ArrayList<>();
-                for (MockOwner<?> o : owners()) {
-                    for (MockRepository r: o.repositories().values()) {
-                        if (r.getId() > since && !r.isPrivate()) {
-                            repositories.add(r);
-                        }
-                    }
-                }
-                Collections.sort(repositories, new Comparator<MockRepository>() {
-                    @Override
-                    public int compare(MockRepository o1, MockRepository o2) {
-                        return Long.compare(o1.getId(), o2.getId());
-                    }
-                });
-                if (repositories.size() > 30) {
-                    rsp.addHeader("Link", String.format(
-                            "<%s/repositories?since=%d>; rel=\"next\", <%s/repositories{?since}>; rel=\"first\"",
-                            getUrl(), repositories.get(30).getId(), getUrl()));
-                } else {
-                    rsp.addHeader("Link", String.format("<%s/repositories{?since}>; rel=\"first\"", getUrl()));
-                }
-                rsp.setContentType("application/json; charset=utf-8");
-                JsonGenerator o = factory.createGenerator(rsp.getOutputStream());
-                o.writeStartArray();
-                try {
-                    for (MockRepository r : repositories.subList(0, Math.min(30, repositories.size()))) {
-                        o.writeStartObject();
-                        o.writeObjectField("id", r.getId());
-                        o.writeObjectField("name", r.getName());
-                        o.writeObjectField("full_name", r.owner().getLogin()+"/"+r.getName());
-                        o.writeFieldName("owner");
-                        o.writeStartObject();
-                        o.writeObjectField("login", r.owner().getLogin());
-                        o.writeObjectField("id", r.owner().getId());
-                        o.writeObjectField("avatar_url", r.owner().getAvatarUrl());
-                        o.writeObjectField("type", r.owner().getType());
-                        o.writeEndObject();
-                        o.writeObjectField("private", r.isPrivate());
-                        o.writeObjectField("html_url", "https://github.com/"+r.owner().getLogin()+"/"+r.getName());
+    private static class RootHandler implements HttpHandler {
+        private final MockGitHub github;
 
-                        o.writeEndObject();
-                    }
-                } finally {
-                    o.writeEndArray();
-                    o.close();
-                }
+        public RootHandler(MockGitHub github) {
+            this.github = Objects.requireNonNull(github);
+        }
 
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            he.getResponseHeaders().set("Content-Type", "application/json;charset=utf-8");
+            he.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+            try (JsonGenerator o = github.factory.createGenerator(he.getResponseBody())) {
+                o.writeStartObject();
+                o.writeStringField("current_user_url", github.getUrl() + "/user");
+                o.writeStringField(
+                        "current_user_authorizations_html_url",
+                        "https://github.com/settings/connections/applications{/client_id}");
+                o.writeStringField("authorizations_url", github.getUrl() + "/authorizations");
+                o.writeStringField(
+                        "code_search_url", github.getUrl() + "/search/code?q={query}{&page,per_page,sort,order}");
+                o.writeStringField(
+                        "commit_search_url", github.getUrl() + "/search/commits?q={query}{&page,per_page,sort,order}");
+                o.writeStringField("emails_url", github.getUrl() + "/user/emails");
+                o.writeStringField("emojis_url", github.getUrl() + "/emojis");
+                o.writeStringField("events_url", github.getUrl() + "/events");
+                o.writeStringField("feeds_url", github.getUrl() + "/feeds");
+                o.writeStringField("followers_url", github.getUrl() + "/user/followers");
+                o.writeStringField("following_url", github.getUrl() + "/user/following{/target}");
+                o.writeStringField("gists_url", github.getUrl() + "/gists{/gist_id}");
+                o.writeStringField("hub_url", github.getUrl() + "/hub");
+                o.writeStringField(
+                        "issue_search_url", github.getUrl() + "/search/issues?q={query}{&page,per_page,sort,order}");
+                o.writeStringField("issues_url", github.getUrl() + "/issues");
+                o.writeStringField("keys_url", github.getUrl() + "/user/keys");
+                o.writeStringField("notifications_url", github.getUrl() + "/notifications");
+                o.writeStringField(
+                        "organization_repositories_url",
+                        github.getUrl() + "/orgs/{org}/repos{?type,page,per_page,sort}");
+                o.writeStringField("organization_url", github.getUrl() + "/orgs/{org}");
+                o.writeStringField("public_gists_url", github.getUrl() + "/gists/public");
+                o.writeStringField("rate_limit_url", github.getUrl() + "/rate_limit");
+                o.writeStringField("repository_url", github.getUrl() + "/repos/{owner}/{repo}");
+                o.writeStringField(
+                        "repository_search_url",
+                        github.getUrl() + "/search/repositories?q={query}{&page,per_page,sort,order}");
+                o.writeStringField(
+                        "current_user_repositories_url", github.getUrl() + "/user/repos{?type,page,per_page,sort}");
+                o.writeStringField("starred_url", github.getUrl() + "/user/starred{/owner}{/repo}");
+                o.writeStringField("starred_gists_url", github.getUrl() + "/gists/starred");
+                o.writeStringField("team_url", github.getUrl() + "/teams");
+                o.writeStringField("user_url", github.getUrl() + "/users/{user}");
+                o.writeStringField("user_organizations_url", github.getUrl() + "/user/orgs");
+                o.writeStringField(
+                        "user_repositories_url", github.getUrl() + "/users/{user}/repos{?type,page,per_page,sort}");
+                o.writeStringField(
+                        "user_search_url", github.getUrl() + "/search/users?q={query}{&page,per_page,sort,order}");
+                o.writeEndObject();
             }
-        };
+            he.close();
+        }
+    }
+
+    private static class OrgsHandler implements HttpHandler {
+        private final MockGitHub github;
+
+        public OrgsHandler(MockGitHub github) {
+            this.github = Objects.requireNonNull(github);
+        }
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            String path = he.getRequestURI().getPath();
+            if (path.endsWith("/")) {
+                // Handle /orgs/{org}/
+                String orgName = path.substring("/orgs/".length(), path.length() - 1);
+                MockOrganization org = github.getOrgs().get(orgName);
+                if (org != null) {
+                    he.getResponseHeaders().set("Content-Type", "application/json;charset=utf-8");
+                    he.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    try (JsonGenerator o = github.factory.createGenerator(he.getResponseBody())) {
+                        o.writeStartObject();
+                        o.writeStringField("login", org.getLogin());
+                        o.writeNumberField("id", org.getId());
+                        o.writeStringField("url", github.getUrl() + "/users/" + org.getLogin());
+                        o.writeStringField("repos_url", github.getUrl() + "/orgs/" + org.getLogin() + "/repos");
+                        o.writeStringField("events_url", github.getUrl() + "/orgs/" + org.getLogin() + "/events");
+                        o.writeStringField("hooks_url", github.getUrl() + "/orgs/" + org.getLogin() + "/hooks");
+                        o.writeStringField("issues_url", github.getUrl() + "/orgs/" + org.getLogin() + "/issues");
+                        o.writeStringField(
+                                "members_url", github.getUrl() + "/orgs/" + org.getLogin() + "/members{/member}");
+                        o.writeStringField(
+                                "public_members_url",
+                                github.getUrl() + "/orgs/" + org.getLogin() + "/public_members{/member}");
+                        o.writeStringField("avatar_url", org.getAvatarUrl());
+                        o.writeStringField("description", org.getDescription());
+                        o.writeStringField("name", org.getName());
+                        o.writeNullField("company");
+                        o.writeStringField("blog", org.getBlog());
+                        o.writeStringField("location", org.getLocation());
+                        o.writeStringField("email", org.getEmail());
+                        o.writeBooleanField("has_organization_projects", true);
+                        o.writeBooleanField("has_repository_projects", true);
+                        o.writeNumberField("public_repos", org.getPublicRepos());
+                        o.writeNumberField("public_gists", 0);
+                        o.writeNumberField("followers", org.getFollowers());
+                        o.writeNumberField("following", org.getFollowing());
+                        o.writeStringField("created_at", tz(org.getCreated()));
+                        o.writeStringField("updated_at", tz(org.getUpdated()));
+                        o.writeStringField("type", org.getType());
+                        o.writeEndObject();
+                    }
+                } else {
+                    he.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, -1);
+                }
+            } else {
+                // Handle /orgs/{org} (redirect to /orgs/{org}/)
+                String orgName = path.substring("/orgs/".length());
+                he.getResponseHeaders().set("Location", "/orgs/" + orgName + "/");
+                he.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_TEMP, -1);
+            }
+            he.close();
+        }
+    }
+
+    private static class UsersHandler implements HttpHandler {
+        private final MockGitHub github;
+
+        public UsersHandler(MockGitHub github) {
+            this.github = Objects.requireNonNull(github);
+        }
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            String path = he.getRequestURI().getPath();
+            if (path.endsWith("/")) {
+                // Handle /users/{username}/
+                String userName = path.substring("/users/".length(), path.length() - 1);
+                MockOwner<?> owner = github.getUsers().get(userName);
+                if (owner == null) {
+                    owner = github.getOrgs().get(userName);
+                }
+                if (owner != null) {
+                    he.getResponseHeaders().set("Content-Type", "application/json;charset=utf-8");
+                    he.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+                    try (JsonGenerator o = github.factory.createGenerator(he.getResponseBody())) {
+                        o.writeStartObject();
+                        o.writeStringField("login", owner.getLogin());
+                        o.writeNumberField("id", owner.getId());
+                        o.writeStringField("avatar_url", owner.getAvatarUrl());
+                        o.writeStringField("gravatar_id", "");
+                        o.writeStringField("url", github.getUrl() + "/users/" + owner.getLogin());
+                        o.writeStringField("html_url", "https://github.com/" + owner.getLogin());
+                        o.writeStringField(
+                                "followers_url", github.getUrl() + "/users/" + owner.getLogin() + "/followers");
+                        o.writeStringField(
+                                "following_url",
+                                github.getUrl() + "/users/" + owner.getLogin() + "/following{/other_user}");
+                        o.writeStringField(
+                                "gists_url", github.getUrl() + "/users/" + owner.getLogin() + "/gists{/gist_id}");
+                        o.writeStringField(
+                                "starred_url",
+                                github.getUrl() + "/users/" + owner.getLogin() + "/starred{/owner}{/repo}");
+                        o.writeStringField(
+                                "subscriptions_url", github.getUrl() + "/users/" + owner.getLogin() + "/subscriptions");
+                        o.writeStringField(
+                                "organizations_url", github.getUrl() + "/users/" + owner.getLogin() + "/orgs");
+                        o.writeStringField("repos_url", github.getUrl() + "/users/" + owner.getLogin() + "/repos");
+                        o.writeStringField(
+                                "events_url", github.getUrl() + "/users/" + owner.getLogin() + "/events{/privacy}");
+                        o.writeStringField(
+                                "received_events_url",
+                                github.getUrl() + "/users/" + owner.getLogin() + "/received_events");
+                        o.writeStringField("type", owner.getType());
+                        if (owner instanceof MockUser user) {
+                            o.writeBooleanField("site_admin", user.isSiteAdmin());
+                        } else {
+                            o.writeBooleanField("site_admin", false);
+                        }
+                        o.writeStringField("name", owner.getName());
+                        if (owner instanceof MockUser user) {
+                            o.writeStringField("company", user.getCompany());
+                        } else {
+                            o.writeNullField("company");
+                        }
+                        o.writeStringField("blog", owner.getBlog());
+                        o.writeStringField("location", owner.getLocation());
+                        o.writeStringField("email", owner.getEmail());
+                        if (owner instanceof MockUser user) {
+                            o.writeBooleanField("hireable", user.isHireable());
+                            o.writeStringField("bio", user.getBio());
+                        } else {
+                            o.writeNullField("hireable");
+                            o.writeNullField("bio");
+                        }
+                        o.writeNumberField("public_repos", owner.getPublicRepos());
+                        o.writeNumberField("public_gists", 0);
+                        o.writeNumberField("followers", owner.getFollowers());
+                        o.writeNumberField("following", owner.getFollowing());
+                        o.writeStringField("created_at", tz(owner.getCreated()));
+                        o.writeStringField("updated_at", tz(owner.getUpdated()));
+                        o.writeEndObject();
+                    }
+                } else {
+                    he.sendResponseHeaders(HttpURLConnection.HTTP_NOT_FOUND, -1);
+                }
+            } else {
+                // Handle /users/{username} (redirect to /users/{username}/)
+                String userName = path.substring("/users/".length());
+                he.getResponseHeaders().set("Location", "/users/" + userName + "/");
+                he.sendResponseHeaders(HttpURLConnection.HTTP_MOVED_TEMP, -1);
+            }
+            he.close();
+        }
+    }
+
+    private static class RepositoriesHandler implements HttpHandler {
+        private final MockGitHub github;
+
+        public RepositoriesHandler(MockGitHub github) {
+            this.github = Objects.requireNonNull(github);
+        }
+
+        @Override
+        public void handle(HttpExchange he) throws IOException {
+            String query = he.getRequestURI().getQuery();
+            long since = 0;
+            if (query != null) {
+                for (String param : query.split("&")) {
+                    String[] pair = param.split("=");
+                    if (pair.length == 2 && "since".equals(pair[0])) {
+                        since = Long.parseLong(pair[1]);
+                        break;
+                    }
+                }
+            }
+            List<MockRepository> repositories = new ArrayList<>();
+            for (MockOwner<?> o : github.owners()) {
+                for (MockRepository r : o.repositories().values()) {
+                    if (r.getId() > since && !r.isPrivate()) {
+                        repositories.add(r);
+                    }
+                }
+            }
+            repositories.sort(Comparator.comparingLong(MockObject::getId));
+            if (repositories.size() > 30) {
+                he.getResponseHeaders()
+                        .set(
+                                "Link",
+                                String.format(
+                                        "<%s/repositories?since=%d>; rel=\"next\", <%s/repositories{?since}>; rel=\"first\"",
+                                        github.getUrl(), repositories.get(30).getId(), github.getUrl()));
+            } else {
+                he.getResponseHeaders()
+                        .set("Link", String.format("<%s/repositories{?since}>; rel=\"first\"", github.getUrl()));
+            }
+            he.getResponseHeaders().set("Content-Type", "application/json;charset=utf-8");
+            he.sendResponseHeaders(HttpURLConnection.HTTP_OK, 0);
+            try (JsonGenerator o = github.factory.createGenerator(he.getResponseBody())) {
+                o.writeStartArray();
+                for (MockRepository r : repositories.subList(0, Math.min(30, repositories.size()))) {
+                    o.writeStartObject();
+                    o.writeNumberField("id", r.getId());
+                    o.writeStringField("name", r.getName());
+                    o.writeStringField("full_name", r.owner().getLogin() + "/" + r.getName());
+                    o.writeFieldName("owner");
+                    o.writeStartObject();
+                    o.writeStringField("login", r.owner().getLogin());
+                    o.writeNumberField("id", r.owner().getId());
+                    o.writeStringField("avatar_url", r.owner().getAvatarUrl());
+                    o.writeStringField("type", r.owner().getType());
+                    o.writeEndObject();
+                    o.writeBooleanField("private", r.isPrivate());
+                    o.writeStringField(
+                            "html_url", "https://github.com/" + r.owner().getLogin() + "/" + r.getName());
+                    o.writeEndObject();
+                }
+                o.writeEndArray();
+            }
+            he.close();
+        }
     }
 }
