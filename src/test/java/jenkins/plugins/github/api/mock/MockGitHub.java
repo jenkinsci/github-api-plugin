@@ -281,7 +281,7 @@ public class MockGitHub implements Closeable {
                             o.writeBooleanField("hireable", user.isHireable());
                             o.writeStringField("bio", user.getBio());
                         } else {
-                            o.writeNullField("hireable");
+                            o.writeBooleanField("hireable", false);
                             o.writeNullField("bio");
                         }
                         o.writeNumberField("public_repos", owner.getPublicRepos());
