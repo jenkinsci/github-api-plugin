@@ -22,14 +22,14 @@ import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class MockGitHub implements Closeable {
-    private AtomicLong nextId = new AtomicLong();
-    private Map<String, MockUser> users = new HashMap<>();
-    private Map<String, MockOrganization> organizations = new HashMap<>();
+    private final AtomicLong nextId = new AtomicLong();
+    private final Map<String, MockUser> users = new HashMap<>();
+    private final Map<String, MockOrganization> organizations = new HashMap<>();
 
     private HttpServer server;
 
     private String url;
-    private JsonFactory factory = new JsonFactory();
+    private final JsonFactory factory = new JsonFactory();
 
     public String open() throws IOException {
         server = HttpServer.create(new InetSocketAddress(InetAddress.getLoopbackAddress(), 0), 0);

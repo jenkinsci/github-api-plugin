@@ -1,12 +1,10 @@
 package jenkins.plugins.github.api.mock;
 
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 
 public class MockUser extends MockOwner<MockUser> {
-    private Set<String> organizations = new HashSet<>();
+    private final Set<String> organizations = new HashSet<>();
     private boolean siteAdmin;
     private String company;
     private boolean hireable;
