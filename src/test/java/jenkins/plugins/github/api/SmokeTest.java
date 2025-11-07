@@ -9,9 +9,8 @@ import jenkins.plugins.github.api.mock.MockGitHub;
 import jenkins.plugins.github.api.mock.MockOrganization;
 import jenkins.plugins.github.api.mock.MockUser;
 import okhttp3.OkHttpClient;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.kohsuke.github.GHOrganization;
 import org.kohsuke.github.GHRepository;
 import org.kohsuke.github.GHUser;
@@ -20,14 +19,11 @@ import org.kohsuke.github.GitHubBuilder;
 import org.kohsuke.github.connector.GitHubConnector;
 import org.kohsuke.github.extras.okhttp3.OkHttpGitHubConnector;
 
-import edu.umd.cs.findbugs.annotations.NonNull;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.is;
-import static org.junit.Assert.assertThat;
 
-@RunWith(Parameterized.class)
-public class SmokeTest {
+class SmokeTest {
 
     @FunctionalInterface
     public interface IOFunction {
@@ -41,51 +37,46 @@ public class SmokeTest {
         GitHub apply(MockGitHub t) throws IOException;
     }
 
-    @NonNull
-    IOFunction connectFunction;
-
-    public SmokeTest(IOFunction connectFunction) {
-        this.connectFunction = connectFunction;
-    }
-
-    @Parameterized.Parameters(name = "connectFunction={index}")
-    public static IOFunction[] connectFunctions() {
+    static IOFunction[] connectFunctions() {
         OkHttpClient okHttpClient = new OkHttpClient();
         GitHubConnector okHttpGitHubConnector = new OkHttpGitHubConnector(okHttpClient);
         ArrayList<IOFunction> list = new ArrayList<>();
-        list.add ((mock) -> GitHub.connectToEnterpriseAnonymously(mock.open()));
-        list.add ((mock) -> new GitHubBuilder().withConnector(okHttpGitHubConnector).withEndpoint(mock.open()).build());
+        list.add (mock -> GitHub.connectToEnterpriseAnonymously(mock.open()));
+        list.add (mock -> new GitHubBuilder().withConnector(okHttpGitHubConnector).withEndpoint(mock.open()).build());
 
         return list.toArray(new IOFunction[] {});
     }
 
-    public GitHub openAndConnect(MockGitHub mock) throws IOException {
+    public GitHub openAndConnect(IOFunction connectFunction, MockGitHub mock) throws IOException {
         return connectFunction.apply(mock);
     }
 
-    @Test
-    public void given__veryBasicMockGitHub__when__connectingAnonymously__then__apiUrlValid() throws Exception {
+    @ParameterizedTest(name = "connectFunction={index}")
+    @MethodSource("connectFunctions")
+    void given__veryBasicMockGitHub__when__connectingAnonymously__then__apiUrlValid(IOFunction connectFunction) throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
-            openAndConnect(mock).checkApiUrlValidity();
+            openAndConnect(connectFunction, mock).checkApiUrlValidity();
         }
     }
 
-    @Test
-    public void given__veryBasicMockGitHub__when__listingRepos__then__reposListed() throws Exception {
+    @ParameterizedTest(name = "connectFunction={index}")
+    @MethodSource("connectFunctions")
+    void given__veryBasicMockGitHub__when__listingRepos__then__reposListed(IOFunction connectFunction) throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
             mock.withOrg("org1").withPublicRepo("repo1").withPrivateRepo("repo2");
             mock.withOrg("org2").withPublicRepo("repo3");
             mock.withUser("user1").withPublicRepo("repo4").withPrivateRepo("repo5");
             Set<String> names = new TreeSet<>();
-            for (GHRepository r: openAndConnect(mock).listAllPublicRepositories()) {
+            for (GHRepository r: openAndConnect(connectFunction, mock).listAllPublicRepositories()) {
                 names.add(r.getFullName());
             }
             assertThat(names, contains("org1/repo1", "org2/repo3", "user1/repo4"));
         }
     }
 
-    @Test
-    public void given__veryBasicMockGitHub__when__listingManyRepos__then__reposListed() throws Exception {
+    @ParameterizedTest(name = "connectFunction={index}")
+    @MethodSource("connectFunctions")
+    void given__veryBasicMockGitHub__when__listingManyRepos__then__reposListed(IOFunction connectFunction) throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
             MockOrganization org1 = mock.withOrg("org1");
             Set<String> expected = new TreeSet<>();
@@ -95,15 +86,16 @@ public class SmokeTest {
 
             }
             Set<String> actual = new TreeSet<>();
-            for (GHRepository r: openAndConnect(mock).listAllPublicRepositories()) {
+            for (GHRepository r: openAndConnect(connectFunction, mock).listAllPublicRepositories()) {
                 actual.add(r.getFullName());
             }
-            assertThat(actual, is(actual));
+            assertThat(actual, is(expected));
         }
     }
 
-    @Test
-    public void given__veryBasicMockGitHub__when__gettingUser__then__userReturned() throws Exception {
+    @ParameterizedTest(name = "connectFunction={index}")
+    @MethodSource("connectFunctions")
+    void given__veryBasicMockGitHub__when__gettingUser__then__userReturned(IOFunction connectFunction) throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
             MockUser expected = mock.withUser("user1")
                     .withAvatarUrl("http://avatar.test/user1")
@@ -115,18 +107,20 @@ public class SmokeTest {
                     .withPrivateRepo("repo1")
                     .withPublicRepo("repo2")
                     .withPublicRepo("repo3");
-            GHUser actual = openAndConnect(mock).getUser("user1");
+            GHUser actual = openAndConnect(connectFunction, mock).getUser("user1");
             assertThat(actual.getLogin(), is(expected.getLogin()));
             assertThat(actual.getName(), is(expected.getName()));
             assertThat(actual.getAvatarUrl(), is(expected.getAvatarUrl()));
             assertThat(actual.getBlog(), is(expected.getBlog()));
             assertThat(actual.getCompany(), is(expected.getCompany()));
-            assertThat(actual.getId(), is((long)expected.getId()));
+            assertThat(actual.getId(), is(expected.getId()));
             assertThat(actual.getPublicRepoCount(), is(expected.getPublicRepos()));
         }
     }
-    @Test
-    public void given__veryBasicMockGitHub__when__gettingOrg__then__orgReturned() throws Exception {
+
+    @ParameterizedTest(name = "connectFunction={index}")
+    @MethodSource("connectFunctions")
+    void given__veryBasicMockGitHub__when__gettingOrg__then__orgReturned(IOFunction connectFunction) throws Exception {
         try (MockGitHub mock = new MockGitHub()) {
             MockOrganization expected = mock.withOrg("org1")
                     .withAvatarUrl("http://avatar.test/org1")
@@ -137,12 +131,12 @@ public class SmokeTest {
                     .withPrivateRepo("repo1")
                     .withPublicRepo("repo2")
                     .withPublicRepo("repo3");
-            GHOrganization actual = openAndConnect(mock).getOrganization("org1");
+            GHOrganization actual = openAndConnect(connectFunction, mock).getOrganization("org1");
             assertThat(actual.getLogin(), is(expected.getLogin()));
             assertThat(actual.getName(), is(expected.getName()));
             assertThat(actual.getAvatarUrl(), is(expected.getAvatarUrl()));
             assertThat(actual.getBlog(), is(expected.getBlog()));
-            assertThat(actual.getId(), is((long)expected.getId()));
+            assertThat(actual.getId(), is(expected.getId()));
             assertThat(actual.getPublicRepoCount(), is(expected.getPublicRepos()));
         }
     }

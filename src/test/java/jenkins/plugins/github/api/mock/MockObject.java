@@ -7,7 +7,7 @@ public class MockObject {
     private final MockGitHub app;
 
     private final long id;
-    private long created;
+    private final long created;
     private long updated;
 
     public MockObject(MockGitHub app) {

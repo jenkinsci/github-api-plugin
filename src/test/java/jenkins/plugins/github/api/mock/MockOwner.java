@@ -111,7 +111,7 @@ public abstract class MockOwner<T> extends MockObject {
                 count++;
             }
         }
-        return 0;
+        return count;
     }
 
     public int getFollowing() {
